@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="pt">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="css_home.css" rel="stylesheet">
+    <title>SiGEE - Home</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> <!-- Importa Chart.js -->
+</head>
+
+<body>
+    <div class="logo-bar">SiGEE</div>
+    <div class="container">
+        <!-- Barra lateral -->
+        <aside class="sidebar">
+            <div class="user-info">
+                <a href="perfil.html"><img id="fotoHome" src="icons/user-icon.png" alt="Foto do usuário"
+                        class="user-avatar"></a>
+                <p class="username"><span id="username"></span></p>
+                <a href="#" class="logout-link" onclick="logout()">Logout</a>
+            </div>
+            <nav class="menu">
+                <button onclick="mostrarSecao('inicio')" class="active">Início</button>
+                <button onclick="mostrarSecao('visualizarConsumo')">Unidade Consumidora</button>
+                <button onclick="mostrarSecao('cadastroConsumo')">Registrar Consumo</button>
+                <button onclick="mostrarSecao('cadastroUnidade')">Cadastrar UC</button>
+            </nav>
+        </aside>
+
+        <!-- Conteúdo principal -->
+        <main class="content">
+            <div id="inicio" class="secao ativo">
+                <h2>Bem-vindo, <span id="username"></span> </h2>
+            </div>
+
+            <div id="cadastroUnidade" class="secao">
+                <h3>Cadastrar Unidade Consumidora</h3>
+                <form id="formCadastroUnidade" onsubmit="cadastrarUnidade(event)">
+                    <input type="text" id="nome" placeholder="Nome da unidade" required><br>
+                    <input type="text" id="cep" placeholder="CEP" required><br>
+                    <input type="text" id="estado" placeholder="Estado (Ex: PA)" maxlength="2" required><br>
+                    <input type="text" id="cidade" placeholder="Cidade" required><br>
+                    <input type="text" id="bairro" placeholder="Bairro" required><br>
+                    <input type="text" id="logradouro" placeholder="Logradouro" required><br>
+                    <input type="text" id="numero" placeholder="Número" required><br>
+                    <input type="text" id="complemento" placeholder="Complemento (Opcional)"><br>
+                    <button type="submit">Cadastrar</button>
+                </form>
+            </div>
+
+            <div id="cadastroConsumo" class="secao">
+                <h3>Cadastrar Consumo</h3>
+                <form id="formCadastroConsumo" onsubmit="cadastrarConsumo(event)">
+                    <select id="unidadeSelect"></select><br>
+                    <input type="date" id="dataRegistro" required><br>
+                    <input type="number" id="consumoKwh" step="0.01" placeholder="Consumo (kWh)" required><br>
+                    <button type="submit">Registrar Consumo</button>
+                </form>
+            </div>
+
+            <div id="visualizarConsumo" class="secao">
+                <h3>Consumo por UC</h3>
+                <ul id="listaUnidades"></ul>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal para gráfico e relatório -->
+    <div id="modalGrafico" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="fecharModal()">&times;</span>
+            <div class="menu-top">
+                <button class="tab ativo" onclick="mostrarAba('grafico')">Gráfico</button>
+                <button class="tab" onclick="mostrarAba('relatorio')">Relatório</button>
+            </div>
+            <div id="grafico" class="conteudo-aba ativo">
+                <div class="menu-mes">
+                    <button id="btnAnterior">&lt;</button>
+                    <span id="mesAtual">Janeiro</span>
+                    <button id="btnProximo">&gt;</button>
+                </div>                
+                <canvas id="graficoConsumo"></canvas>
+            </div>
+            <div id="relatorio" class="conteudo-aba">
+                <h2>Relatório de Consumo</h2>
+                <p><strong>Período:</strong> <span id="periodo"></span></p>
+                <p><strong>Média de Consumo:</strong> <span id="mediaConsumo"></span> kWh</p>
+                <button onclick="imprimirRelatorio()">🖨️ Imprimir</button>
+            
+                <table class="tabela-relatorio">
+                    <thead>
+                        <tr>
+                            <th>Data</th>
+                            <th>Consumo (kWh)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="listaConsumo"></tbody>
+                </table>
+            </div>    
+        </div>
+    </div>
+
+    <!-- Script de inicialização para login e logout -->
+    <script src="home_entrada.js"></script>
+
+    <!-- Script para abrir/fechar modal e trocar abas -->
+    <script src="home_grafico.js"></script>
+
+    <!-- Script para cadastrar e listar unidades consumidoras -->
+    <script src="home_uc.js"></script>
+
+    <script>
+        async function cadastrarConsumo(event) {
+            event.preventDefault();
+            const unidade_id = document.getElementById("unidadeSelect").value;
+            const data_registro = document.getElementById("dataRegistro").value;
+            const consumo_kwh = document.getElementById("consumoKwh").value;
+
+            const resposta = await fetch('http://localhost:3000/sigee/consumo', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + localStorage.getItem("token")
+                },
+                body: JSON.stringify({ unidade_id, data_registro, consumo_kwh })
+            });
+
+            alert((await resposta.json()).mensagem);
+            if (resposta.ok) {
+                listarConsumo(unidade_id); // Atualiza a lista
+                document.getElementById("formCadastroConsumo").reset(); // Limpa o formulário
+            }
+        }
+
+        async function listarConsumo(unidade_id) {
+            const resposta = await fetch(`http://localhost:3000/sigee/consumo/${unidade_id}`, {
+                headers: { 'Authorization': 'Bearer ' + localStorage.getItem("token") }
+            });
+
+            const consumos = await resposta.json();
+            const lista = document.getElementById("listaConsumo");
+            lista.innerHTML = "";
+
+            consumos.forEach(consumo => {
+                const item = document.createElement("li");
+                item.textContent = `${consumo.data_registro}: ${consumo.consumo_kwh} kWh`;
+                lista.appendChild(item);
+            });
+        }
+
+        verificarLogin();
+    </script>
+</body>
+
+</html>

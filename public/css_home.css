@@ -1,0 +1,367 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    background: #f4f4f4;
+    background-image: linear-gradient(#b29dcb, #fff);
+    background-repeat: repeat-x;
+}
+
+.logo-bar {
+    width: 100%;
+    background: #756FA1;
+    padding: 15px;
+    text-align: left;
+    font-size: 24px;
+    font-weight: bold;
+    color: white;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.container {
+    display: flex;
+    margin-top: 60px;
+    height: calc(90vh - 50px); /* Ajusta altura para caber abaixo da logo */
+}
+
+.secao {
+    display: none;
+    flex-grow: 1;
+}
+
+.ativo {
+    display: flex;
+    flex-direction: column;
+}
+
+/* Ajusta a barra lateral */
+.sidebar {
+    position: absolute;
+    top: 57.5px; /* Encosta na logo-bar */
+    left: 0;
+    width: 280px;
+    height: calc(99vh - 50px); /* Ocupa até o final da página */
+    background-color: #d1c9e0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 20px;
+}
+
+
+/* Estiliza o avatar */
+.user-avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+/* Nome do usuário */
+.username {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 5px;
+    text-align: center;
+    justify-content: center;
+}
+
+/* Estiliza o link de logout */
+.logout-link {
+    font-size: 12px;
+    color: #4f2ee2;
+    text-decoration: none;
+    margin-bottom: 20px;
+    text-align: center;
+    justify-content: center;
+}
+
+.menu {
+    padding: 20px;
+}
+
+/* Ajusta os botões do menu */
+.menu button {
+    margin-bottom: 20px;
+    width: 100%;
+    background-color: #6f6692;
+    color: white;
+    border: none;
+    padding: 10px;
+    margin: 5px 0px;
+    cursor: pointer;
+    font-size: 16px;
+    text-align: left;
+    transition: 0.3s;
+}
+
+.menu button:hover {
+    background-color: #5b537a;
+}
+
+/* Conteúdo principal*/
+.content {
+    flex: 1;
+    padding: 40px;
+    display: flex;
+    flex-direction: column;
+    margin: 5px 0;
+    position: relative;
+    z-index: 1;
+    margin-left: 300px; /* Largura da sidebar + um pequeno espaço */
+}
+
+#inicio h2 {
+    font-size: 30px;
+    color: black;
+}
+
+/* Estilização das unidades consumidoras */
+.unidade-consumidora {
+    display: flex;
+    align-items: center;
+    justify-content: space-between; /* Para alinhar o ícone de deletar */
+    background: #e0e0e0;
+    padding: 10px;
+    margin: 20px 0;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.unidade-consumidora .uc-icon {
+    width: 40px;
+    height: 40px;
+    margin-right: 10px;
+}
+
+.unidade-consumidora .delete-icon {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    margin-left: auto;
+}
+
+.unidade-consumidora.active {
+    border: 2px solid #ff914d;
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal-content {
+    background: white;
+    margin: 10% auto;
+    padding: 20px;
+    width: 60%;
+    border-radius: 10px;
+    position: relative;
+}
+
+.close {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    font-size: 24px;
+    cursor: pointer;
+}
+
+.menu-top {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.tab {
+    padding: 8px 12px;
+    border: none;
+    cursor: pointer;
+    background: #ddd;
+    border-radius: 15px;
+}
+
+.tab.ativo {
+    background: orange;
+    color: white;
+    border-radius: 15px;
+}
+
+.conteudo-aba {
+    display: none;
+}
+
+.conteudo-aba.ativo {
+    display: block;
+}
+
+#graficoConsumo {
+    width: 100% !important;
+    height: 400px !important;
+}
+
+/* Cadastrar Consumo */
+#cadastroConsumo {
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 20px;
+    width: 80%;  /* Ocupará 80% da largura da tela */
+    max-width: 800px;
+    height: 50%;
+    max-height: 350px;
+    margin: 20px auto;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+#cadastroConsumo h3 {
+    margin-bottom: 15px;
+    color: #333;
+}
+
+#cadastroConsumo form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+#cadastroConsumo select,
+#cadastroConsumo input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+    outline: none;
+    transition: border 0.3s;
+}
+
+#cadastroConsumo select:focus,
+#cadastroConsumo input:focus {
+    border-color: #ff914d;
+}
+
+#cadastroConsumo button {
+    background: #6f6692;
+    color: #fff;
+    font-size: 16px;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+#cadastroConsumo button:hover {
+    background: #f17c33;
+}
+
+/* Cadastrar UC */
+#cadastroUnidade {
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 20px;
+    width: 80%;  /* Ocupará 80% da largura da tela */
+    max-width: 800px;
+    max-height: 900px;
+    margin: 0px auto;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+#cadastroUnidade h3 {
+    margin-bottom: 15px;
+    color: #333;
+}
+
+#cadastroUnidade form {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+}
+
+#cadastroUnidade input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+    outline: none;
+    transition: border 0.3s;
+}
+
+#cadastroUnidade input:focus {
+    border-color: #ff914d;
+}
+
+#cadastroUnidade button {
+    background: #6f6692;
+    color: #fff;
+    font-size: 16px;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+#cadastroUnidade button:hover {
+    background: #f17c33;
+}
+
+/* Estilizando o Relatório de Consumo */
+#relatorio {
+    padding: 20px;
+    font-family: Arial, sans-serif;
+}
+
+#relatorio h2 {
+    text-align: center;
+    color: #333;
+}
+
+#relatorio p {
+    font-size: 16px;
+    margin-bottom: 10px;
+}
+
+.tabela-relatorio {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+.tabela-relatorio th, .tabela-relatorio td {
+    border: 1px solid #ddd;
+    padding: 10px;
+    text-align: center;
+}
+
+.tabela-relatorio th {
+    background-color: #6f6692;
+    color: white;
+}
+
+.tabela-relatorio tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+.tabela-relatorio tr:hover {
+    background-color: #ddd;
+}

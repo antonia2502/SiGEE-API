@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Perfil do Usuário</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 20px;
+        }
+        .foto-container {
+            position: relative;
+            display: inline-block;
+        }
+        .foto-container img {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #000;
+        }
+        .foto-container input {
+            display: none;
+        }
+        .btn {
+            margin-top: 10px;
+            padding: 8px 12px;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            color: #fff;
+        }
+        .btn-upload {
+            background: #007bff;
+        }
+        .btn-upload:hover {
+            background: #0056b3;
+        }
+        .btn-delete {
+            background: #dc3545;
+        }
+        .btn-delete:hover {
+            background: #a71d2a;
+        }
+        .btn-home {
+            background: #28a745;
+        }
+        .btn-home:hover {
+            background: #1d7a34;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>Perfil do Usuário</h2>
+
+    <div class="foto-container">
+        <img id="fotoPerfil" src="user-icon.png" alt="Foto do usuário">
+        <input type="file" id="inputFoto" accept="image/*">
+        <br>
+        <button class="btn btn-upload" onclick="document.getElementById('inputFoto').click()">Escolher Foto</button>
+        <button class="btn btn-delete" onclick="excluirFoto()">Excluir Foto</button>
+    </div>
+
+    <br>
+    <button class="btn btn-home" onclick="window.location.href='home.html'">Voltar para Home</button>
+
+    <script>
+        // Carregar foto salva
+        window.onload = function () {
+            const fotoSalva = localStorage.getItem("fotoPerfil");
+            if (fotoSalva) {
+                document.getElementById("fotoPerfil").src = fotoSalva;
+            }
+        };
+
+        // Atualizar a foto quando o usuário escolher uma nova
+        document.getElementById("inputFoto").addEventListener("change", function (event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    const imagemBase64 = e.target.result;
+                    document.getElementById("fotoPerfil").src = imagemBase64;
+                    localStorage.setItem("fotoPerfil", imagemBase64);
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Função para excluir a foto
+        function excluirFoto() {
+            localStorage.removeItem("fotoPerfil");
+            document.getElementById("fotoPerfil").src = "user-icon.png";
+        }
+    </script>
+
+</body>
+</html>
