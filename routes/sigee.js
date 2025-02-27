@@ -83,19 +83,6 @@ router.post('/unidades', autenticarToken, async (req, res) => {
     }
 });
 
-
-
-// Listar unidades do usuário logado
-/*router.get('/unidades', autenticarToken, async (req, res) => {
-    const usuario_id = req.user.id;
-
-    try {
-        const [rows] = await db.query('SELECT id, nome, cidade, estado FROM unidades_consumidoras WHERE usuario_id = ?', [usuario_id]);
-        res.json(rows);
-    } catch (error) {
-        res.status(500).json({ erro: error.message });
-    }
-});*/
 router.get('/unidades', autenticarToken, async (req, res) => {
     const usuario_id = req.user.id;
 

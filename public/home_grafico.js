@@ -1,86 +1,7 @@
-/*function abrirModal() {
-    document.getElementById("modalGrafico").style.display = "block";
-    
-    setTimeout(() => {
-        carregarDadosConsumo();
-    }, 300); // Pequeno atraso para garantir que o modal e o canvas sejam carregados
-}
+document.addEventListener("DOMContentLoaded", () => {
+    carregarDadosConsumo();
+});
 
-
-function fecharModal() {
-    document.getElementById("modalGrafico").style.display = "none";
-}
-
-function mostrarAba(aba) {
-    document.querySelectorAll(".conteudo-aba").forEach(div => div.classList.remove("ativo"));
-    document.getElementById(aba).classList.add("ativo");
-
-    document.querySelectorAll(".tab").forEach(tab => tab.classList.remove("ativo"));
-    document.querySelector(`[onclick="mostrarAba('${aba}')"]`).classList.add("ativo");
-}
-
-async function carregarDadosConsumo() {
-    const unidade = JSON.parse(localStorage.getItem("unidadeSelecionada"));
-    if (!unidade) {
-        alert("Nenhuma unidade selecionada!");
-        window.location.href = "home.html";
-        return;
-    }
-
-    try {
-        const resposta = await fetch(`http://localhost:3000/sigee/consumo/${unidade.id}`, {
-            headers: { 'Authorization': 'Bearer ' + localStorage.getItem("token") }
-        });
-
-        if (!resposta.ok) {
-            throw new Error("Erro ao carregar os dados de consumo.");
-        }
-
-        const consumos = await resposta.json();
-        const labels = consumos.map(c => c.data_registro);
-        const valores = consumos.map(c => c.consumo_kwh);
-
-        const ctx = document.getElementById("graficoConsumo")?.getContext("2d");
-
-        if (!ctx) {
-            console.error("Elemento 'graficoConsumo' não encontrado!");
-            return;
-        }
-
-        // Verifica se existe um gráfico anterior e se o método destroy() existe
-        if (window.grafico instanceof Chart) {
-            window.grafico.destroy();
-        }
-
-        window.grafico = new Chart(ctx, {
-            type: "line",
-            data: {
-                labels: labels,
-                datasets: [{
-                    label: "Consumo (kWh)",
-                    data: valores,
-                    borderColor: "blue",
-                    backgroundColor: "rgba(0, 0, 255, 0.2)",
-                    borderWidth: 2,
-                    tension: 0.1
-                }]
-            },
-            options: {
-                responsive: true,
-                scales: {
-                    x: { title: { display: true, text: "Data" } },
-                    y: { title: { display: true, text: "Consumo (kWh)" } }
-                }
-            }
-        });
-
-    } catch (erro) {
-        console.error("Erro ao buscar os dados de consumo:", erro);
-    }
-}
-*/
-
-//////////////
 function abrirModal() {
     document.getElementById("modalGrafico").style.display = "block";
     
@@ -118,10 +39,14 @@ document.getElementById("btnProximo").addEventListener("click", () => mudarMes(1
 async function carregarDadosConsumo() {
     const unidade = JSON.parse(localStorage.getItem("unidadeSelecionada"));
     if (!unidade) {
-        alert("Nenhuma unidade selecionada!");
-        window.location.href = "home.html";
+        if (!sessionStorage.getItem("redirecionado")) {
+            alert("Nenhuma unidade selecionada!");
+            sessionStorage.setItem("redirecionado", "true"); // Impede múltiplos redirecionamentos
+            window.location.href = "home.html";
+        }
         return;
     }
+    
 
     try {
         const resposta = await fetch(`http://localhost:3000/sigee/consumo/${unidade.id}`, {
